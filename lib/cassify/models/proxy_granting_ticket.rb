@@ -58,5 +58,28 @@ module Cassify
         end
       end
     end
+    
+    def self.validate_ticket(ticket)
+      unless ticket
+        error = Error.new(:INVALID_REQUEST, "pgt parameter was missing in the request.")
+        logger.warn("#{error.code} - #{error.message}")
+        return [nil, error]
+      end
+      
+      pgt = ProxyGrantingTicket.find_by_ticket(ticket)
+      unless pgt
+        error = Error.new(:BAD_PGT, "Invalid proxy granting ticket '#{ticket}' (no matching ticket found in the database).")
+        logger.warn("#{error.code} - #{error.message}")
+        return [nil, error]
+      end
+      
+      if pgt.service_ticket
+        logger.info("Proxy granting ticket '#{ticket}' belonging to user '#{pgt.service_ticket.username}' successfully validated.")
+      else
+        error = Error.new(:INTERNAL_ERROR, "Proxy granting ticket '#{ticket}' is not associated with a service ticket.")
+        logger.error("#{error.code} - #{error.message}")
+      end
+      [pgt, error]
+    end
   end
 end
