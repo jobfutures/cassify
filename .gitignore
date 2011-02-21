@@ -19,7 +19,5 @@ pkg/*
 .bundle
 
 ## PROJECT::SPECIFIC
-spec/database.yml
+config/database.example.yml
 log/
-spec/fixtures/fucking_huge.csv
-spec/fucking_huge_spec.rb

@@ -1,13 +1,7 @@
 require 'uri'
 require 'net/https'
 
-#require 'casserver/model'
-
-# Encapsulates CAS functionality. This module is meant to be included in
-# the Cassify::Controllers module.
 module Cassify
-
-  #include Model
   class Cas
     def self.generate_login_ticket(host_name)
       login_ticket = LoginTicket.new(
