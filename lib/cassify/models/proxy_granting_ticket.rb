@@ -14,14 +14,9 @@ module Cassify
     # TODO: Need refactoring
     # Move https validate part to a new validation method
     # Create a new attribute for pgt_url
-    def self.generate!(pgt_url, host_name, st)
+    def self.generate!(pgt_url, host_name, service_ticket)
 
       uri = URI.parse(pgt_url)
-      path = uri.path.empty? ? '/' : uri.path
-      path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
-      
-      https = Net::HTTP.new(uri.host,uri.port)
-      https.use_ssl = true
 
       # Here's what's going on here:
       #
@@ -33,15 +28,19 @@ module Cassify
       pgt = ProxyGrantingTicket.new(
         :ticket             => "PGT-" + Cassify::Utils.random_string(60)
         :iou                => "PGTIOU-" + Cassify::Utils.random_string(57)
-        :service_ticket_id  => st.id
+        :service_ticket_id  => service_ticket.id
         :client_hostname    => host_name
       )
 
       # FIXME: The CAS protocol spec says to use 'pgt' as the parameter, but in practice
       #         the JA-SIG and Yale server implementations use pgtId. We'll go with the
       #         in-practice standard.
+      path = uri.path.empty? ? '/' : uri.path
+      path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
       path += (uri.query.nil? || uri.query.empty? ? '?' : '&') + "pgtId=#{pgt.ticket}&pgtIou=#{pgt.iou}"
             
+      https = Net::HTTP.new(uri.host,uri.port)
+      https.use_ssl = true
       https.start do |conn|
         response = conn.request_get(path)
         # TODO: follow redirects... 2.5.4 says that redirects MAY be followed
