@@ -1,5 +1,5 @@
 module Cassify
-  class ProxyValidation < ServiceValidation
+  class ProxyValidator < ServiceValidator
     def validate!
       t, @error = Cas.validate_proxy_ticket(@service, @ticket)
       @success = t && !@error
