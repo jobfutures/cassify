@@ -1,24 +1,23 @@
 require 'uri'
 require 'net/https'
 
-require 'casserver/model'
+#require 'casserver/model'
 
 # Encapsulates CAS functionality. This module is meant to be included in
-# the CASServer::Controllers module.
-module CASServer::CAS
+# the Cassify::Controllers module.
+module Cassify
 
-  include CASServer::Model
-
-  def generate_login_ticket
-    # 3.5 (login ticket)
-    lt = LoginTicket.new
-    lt.ticket = "LT-" + CASServer::Utils.random_string
-
-    lt.client_hostname = @env['HTTP_X_FORWARDED_FOR'] || @env['REMOTE_HOST'] || @env['REMOTE_ADDR']
-    lt.save!
-    $LOG.debug("Generated login ticket '#{lt.ticket}' for client" +
-      " at '#{lt.client_hostname}'")
-    lt
+  #include Model
+  class Cas
+    def self.generate_login_ticket(host_name)
+      login_ticket = LoginTicket.new(
+        :ticket          => "LT-" + Cassify::Utils.random_string,
+        :client_hostname => host_name
+      )
+      login_ticket.save!
+      $LOG.debug("Generated login ticket '#{login_ticket.ticket}' for client at '#{login_ticket.client_hostname}'")
+      login_ticket
+    end
   end
 
   # Creates a TicketGrantingTicket for the given username. This is done when the user logs in
@@ -30,7 +29,7 @@ module CASServer::CAS
   def generate_ticket_granting_ticket(username, extra_attributes = {})
     # 3.6 (ticket granting cookie/ticket)
     tgt = TicketGrantingTicket.new
-    tgt.ticket = "TGC-" + CASServer::Utils.random_string
+    tgt.ticket = "TGC-" + Cassify::Utils.random_string
     tgt.username = username
     tgt.extra_attributes = extra_attributes
     tgt.client_hostname = @env['HTTP_X_FORWARDED_FOR'] || @env['REMOTE_HOST'] || @env['REMOTE_ADDR']
@@ -44,7 +43,7 @@ module CASServer::CAS
   def generate_service_ticket(service, username, tgt)
     # 3.1 (service ticket)
     st = ServiceTicket.new
-    st.ticket = "ST-" + CASServer::Utils.random_string
+    st.ticket = "ST-" + Cassify::Utils.random_string
     st.service = service
     st.username = username
     st.granted_by_tgt_id = tgt.id
@@ -58,7 +57,7 @@ module CASServer::CAS
   def generate_proxy_ticket(target_service, pgt)
     # 3.2 (proxy ticket)
     pt = ProxyTicket.new
-    pt.ticket = "PT-" + CASServer::Utils.random_string
+    pt.ticket = "PT-" + Cassify::Utils.random_string
     pt.service = target_service
     pt.username = pgt.service_ticket.username
     pt.granted_by_pgt_id = pgt.id
@@ -88,8 +87,8 @@ module CASServer::CAS
       path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
       
       pgt = ProxyGrantingTicket.new
-      pgt.ticket = "PGT-" + CASServer::Utils.random_string(60)
-      pgt.iou = "PGTIOU-" + CASServer::Utils.random_string(57)
+      pgt.ticket = "PGT-" + Cassify::Utils.random_string(60)
+      pgt.iou = "PGTIOU-" + Cassify::Utils.random_string(57)
       pgt.service_ticket_id = st.id
       pgt.client_hostname = @env['HTTP_X_FORWARDED_FOR'] || @env['REMOTE_HOST'] || @env['REMOTE_ADDR']
 
@@ -173,7 +172,7 @@ module CASServer::CAS
       if st.consumed?
         error = Error.new(:INVALID_TICKET, "Ticket '#{ticket}' has already been used up.")
         $LOG.warn "#{error.code} - #{error.message}"
-      elsif st.kind_of?(CASServer::Model::ProxyTicket) && !allow_proxy_tickets
+      elsif st.kind_of?(Cassify::Model::ProxyTicket) && !allow_proxy_tickets
         error = Error.new(:INVALID_TICKET, "Ticket '#{ticket}' is a proxy ticket, but only service tickets are allowed here.")
         $LOG.warn "#{error.code} - #{error.message}"
       elsif Time.now - st.created_on > settings.config[:maximum_unused_service_ticket_lifetime]
@@ -202,7 +201,7 @@ module CASServer::CAS
   def validate_proxy_ticket(service, ticket)
     pt, error = validate_service_ticket(service, ticket, true)
 
-    if pt.kind_of?(CASServer::Model::ProxyTicket) && !error
+    if pt.kind_of?(Cassify::Model::ProxyTicket) && !error
       if not pt.granted_by_pgt
         error = Error.new(:INTERNAL_ERROR, "Proxy ticket '#{pt}' belonging to user '#{pt.username}' is not associated with a proxy granting ticket.")
       elsif not pt.granted_by_pgt.service_ticket
@@ -245,7 +244,7 @@ module CASServer::CAS
     #http.use_ssl = true if uri.scheme = 'https'
 
     time = Time.now
-    rand = CASServer::Utils.random_string
+    rand = Cassify::Utils.random_string
 
     path = uri.path
     path = '/' if path.empty?
@@ -277,7 +276,7 @@ module CASServer::CAS
   end
 
   def service_uri_with_ticket(service, st)
-    raise ArgumentError, "Second argument must be a ServiceTicket!" unless st.kind_of? CASServer::Model::ServiceTicket
+    raise ArgumentError, "Second argument must be a ServiceTicket!" unless st.kind_of? Cassify::Model::ServiceTicket
 
     # This will choke with a URI::InvalidURIError if service URI is not properly URI-escaped...
     # This exception is handled further upstream (i.e. in the controller).

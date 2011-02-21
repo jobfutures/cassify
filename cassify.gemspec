@@ -21,12 +21,14 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pg"
   s.add_development_dependency "devise"
   s.add_development_dependency "builder"
+  s.add_development_dependency "crypt-isaac"
 
   s.add_runtime_dependency "activerecord", ">= 3.0.0"
   s.add_runtime_dependency "activesupport", ">= 3.0.0"
   s.add_runtime_dependency "pg"
   s.add_runtime_dependency "devise"
   s.add_runtime_dependency "builder"
+  s.add_runtime_dependency "crypt-isaac"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
