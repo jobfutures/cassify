@@ -3,91 +3,6 @@ require 'net/https'
 
 module Cassify
   class Cas
-    def self.generate_login_ticket(host_name)
-      login_ticket = LoginTicket.new(
-        :ticket          => "LT-" + Cassify::Utils.random_string,
-        :client_hostname => host_name
-      )
-      login_ticket.save!
-      $LOG.debug("Generated login ticket '#{login_ticket.ticket}' for client at '#{login_ticket.client_hostname}'")
-      login_ticket
-    end
-
-    def generate_service_ticket(service, username, host_name, tgt)
-      service_ticket = ServiceTicket.new(
-        :ticket             => "ST-" + Cassify::Utils.random_string
-        :service            => service
-        :username           => username
-        :granted_by_tgt_id  => tgt.id
-        :client_hostname    => host_name
-      )
-      service_ticket.save!
-      $LOG.debug("Generated service ticket '#{service_ticket.ticket}' for service '#{service_ticket.service}'" +
-        " for user '#{service_ticket.username}' at '#{service_ticket.client_hostname}'")
-      service_ticket
-    end
-
-    def generate_proxy_ticket(target_service, host_name, pgt)
-      proxy_ticket = ProxyTicket.new(
-        :ticket             => "PT-" + Cassify::Utils.random_string,
-        :service            => target_service,
-        :username           => pgt.service_ticket.username,
-        :granted_by_pgt_id  => pgt.id,
-        :granted_by_tgt_id  => pgt.service_ticket.granted_by_tgt.id,
-        :client_hostname    => host_name
-      )
-      proxy_ticket.save!
-    
-      $LOG.debug("Generated proxy ticket '#{proxy_ticket.ticket}' for target service '#{proxy_ticket.service}'" +
-        " for user '#{proxy_ticket.username}' at '#{proxy_ticket.client_hostname}' using proxy-granting" +
-        " ticket '#{pgt.ticket}'")
-      proxy_ticket
-    end
-
-    def generate_proxy_granting_ticket(pgt_url, st)
-      uri = URI.parse(pgt_url)
-      https = Net::HTTP.new(uri.host,uri.port)
-      https.use_ssl = true
-
-      # Here's what's going on here:
-      #
-      #   1. We generate a ProxyGrantingTicket (but don't store it in the database just yet)
-      #   2. Deposit the PGT and it's associated IOU at the proxy callback URL.
-      #   3. If the proxy callback URL responds with HTTP code 200, store the PGT and return it;
-      #      otherwise don't save it and return nothing.
-      #
-      https.start do |conn|
-        path = uri.path.empty? ? '/' : uri.path
-        path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
-      
-        pgt = ProxyGrantingTicket.new
-        pgt.ticket = "PGT-" + Cassify::Utils.random_string(60)
-        pgt.iou = "PGTIOU-" + Cassify::Utils.random_string(57)
-        pgt.service_ticket_id = st.id
-        pgt.client_hostname = @env['HTTP_X_FORWARDED_FOR'] || @env['REMOTE_HOST'] || @env['REMOTE_ADDR']
-
-        # FIXME: The CAS protocol spec says to use 'pgt' as the parameter, but in practice
-        #         the JA-SIG and Yale server implementations use pgtId. We'll go with the
-        #         in-practice standard.
-        path += (uri.query.nil? || uri.query.empty? ? '?' : '&') + "pgtId=#{pgt.ticket}&pgtIou=#{pgt.iou}"
-
-        response = conn.request_get(path)
-        # TODO: follow redirects... 2.5.4 says that redirects MAY be followed
-        # NOTE: The following response codes are valid according to the JA-SIG implementation even without following redirects
-      
-        if %w(200 202 301 302 304).include?(response.code)
-          # 3.4 (proxy-granting ticket IOU)
-          pgt.save!
-          $LOG.debug "PGT generated for pgt_url '#{pgt_url}': #{pgt.inspect}"
-          pgt
-        else
-          $LOG.warn "PGT callback server responded with a bad result code '#{response.code}'. PGT will not be stored."
-          nil
-        end
-      end
-    end
-
-
 
     def validate_ticket_granting_ticket(ticket)
       $LOG.debug("Validating ticket granting ticket '#{ticket}'")
@@ -97,7 +12,7 @@ module Cassify
         $LOG.debug error
       elsif tgt = TicketGrantingTicket.find_by_ticket(ticket)
         if settings.config[:maximum_session_lifetime] && Time.now - tgt.created_on > settings.config[:maximum_session_lifetime]
-  	tgt.destroy
+  	      tgt.destroy
           error = "Your session has expired. Please log in again."
           $LOG.info "Ticket granting ticket '#{ticket}' for user '#{tgt.username}' expired."
         else
