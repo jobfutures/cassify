@@ -10,3 +10,6 @@ Not working
 * make it work with a separate database if specified
 * plug-in authenticator architecture
 
+## Spec
+
+[http://www.jasig.org/cas/protocol](CAS Spec)

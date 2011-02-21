@@ -21,3 +21,4 @@ pkg/*
 ## PROJECT::SPECIFIC
 config/database.example.yml
 log/
+views/
