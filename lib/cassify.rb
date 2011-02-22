@@ -33,7 +33,6 @@ end
 
 Logger.new("log/cas.log")
 
-Cassify::Settings.new
 Cassify::Settings.configure do |config|
   config.maximum_unused_login_ticket_lifetime = 1.day
 end
