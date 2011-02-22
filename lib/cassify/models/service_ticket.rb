@@ -15,10 +15,10 @@ module Cassify
 
       def self.generate!(service, username, host_name, tgt)
         ticket = ServiceTicket.new(
-          :ticket             => "ST-" + Cassify::Utils.random_string
-          :service            => service
-          :username           => username
-          :granted_by_tgt_id  => tgt.id
+          :ticket             => "ST-" + Cassify::Utils.random_string,
+          :service            => service,
+          :username           => username,
+          :granted_by_tgt_id  => tgt.id,
           :client_hostname    => host_name
         )
         ticket.save!

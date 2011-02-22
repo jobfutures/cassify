@@ -13,7 +13,7 @@ module Cassify
           :client_hostname => host_name
         )
         ticket.save!
-        LoginTicket.logger.debug("Generated login ticket '#{ticket.ticket}' for client at '#{ticket.client_hostname}'")
+        logger.debug("Generated login ticket '#{ticket.ticket}' for client at '#{ticket.client_hostname}'")
         ticket
       end
     end

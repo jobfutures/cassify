@@ -22,7 +22,7 @@ module Cassify
         end
         
         tgt = TicketGrantingTicket.find_by_ticket(ticket)
-        unless tgt do
+        unless tgt
           error = "Invalid ticket granting ticket '#{ticket}' (no matching ticket found in the database)."
           logger.warn(error)
           return [nil, error]        
