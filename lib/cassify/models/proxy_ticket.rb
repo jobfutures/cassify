@@ -1,6 +1,3 @@
-require 'active_record'
-require 'active_record/base'
-
 module Cassify
   module Models
     class ProxyTicket < ServiceTicket
@@ -25,19 +22,20 @@ module Cassify
         proxy_ticket
       end
       
-      def validate_ticket(service, ticket)
-        pt, error = ServiceTicket.validate_ticket(service, ticket, true)
-
-        if pt.kind_of?(Cassify::Model::ProxyTicket) && !error
-          if not pt.granted_by_pgt
-            error = Error.new(:INTERNAL_ERROR, "Proxy ticket '#{pt}' belonging to user '#{pt.username}' is not associated with a proxy granting ticket.")
-          elsif not pt.granted_by_pgt.service_ticket
-            error = Error.new(:INTERNAL_ERROR, "Proxy granting ticket '#{pt.granted_by_pgt}'"+
-              " (associated with proxy ticket '#{pt}' and belonging to user '#{pt.username}' is not associated with a service ticket.")
-          end
+      def self.validate(service, ticket)
+        super(service, ticket, true)
+        proxy_ticket = find_by_ticket(ticket)
+        case
+        when proxy_ticket.nil?
+          raise Cassify::Error.new :TICKET_ERROR, "Proxy ticket was nil"
+        when proxy_ticket.granted_by_pgt.nil?
+          raise Cassify::Error.new :TICKET_ERROR, "Proxy ticket '#{proxy_ticket.ticket}' belonging to user '#{proxy_ticket.username}' is not associated with a proxy granting ticket."
+        when proxy_ticket.granted_by_pgt.service_ticket.nil?
+          raise Cassify::Error.new :TICKET_ERROR, <<-EOL
+            Proxy granting ticket '#{proxy_ticket.granted_by_pgt.ticket}'
+            (associated with proxy ticket '#{proxy_ticket.ticket}' and belonging to user '#{proxy_ticket.username}' is not associated with a service ticket.
+          EOL
         end
-
-        [pt, error]
       end
     end
   end

@@ -1,5 +1,5 @@
 module Cassify
-  class ServiceValidator
+  class ServiceValidate
     attr_reader :proxies, :extra_attributes, :success, :username, :pgtiou, :error
 
     def intialize(service, ticket, pgt_url = nil, renew = nil)

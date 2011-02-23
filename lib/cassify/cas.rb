@@ -1,6 +1,3 @@
-require 'uri'
-require 'net/https'
-
 module Cassify
   class Cas
     # Takes an existing ServiceTicket object (presumably pulled from the database)

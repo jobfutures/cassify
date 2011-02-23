@@ -1,8 +1,3 @@
-require 'uri'
-require 'net/https'
-require 'active_record'
-require 'active_record/base'
-
 module Cassify
   module Models
     class ProxyGrantingTicket < Ticket

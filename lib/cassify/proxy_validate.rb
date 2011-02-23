@@ -1,7 +1,7 @@
 module Cassify
-  class ProxyValidator < ServiceValidator
+  class ProxyValidate < ServiceValidate
     def validate!
-      t, @error = ProxyTicket.validate_ticket(@service, @ticket)
+      t, @error = Models::ProxyTicket.validate_ticket(@service, @ticket)
       @success = t && !@error
       if @success
         @username = t.username
