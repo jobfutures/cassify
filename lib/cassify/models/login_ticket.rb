@@ -2,15 +2,22 @@ module Cassify
   module Models
     class LoginTicket < Ticket
       set_table_name 'casserver_lt'
-
+      
+      after_save :log_ticket
+      
+      def log_ticket
+        CasLog.info "Generated login ticket '#{ticket}' for client at '#{client_hostname}'"
+      end
+      
       def self.generate!(host_name)
         ticket = LoginTicket.new(
           :ticket          => "LT-#{Cassify::Utils.random_string}",
           :client_hostname => host_name
         )
-        ticket.save!
-        CasLog.info "Generated login ticket '#{ticket.ticket}' for client at '#{ticket.client_hostname}'"
-        ticket
+        
+        if ticket.save!        
+          ticket
+        end
       end
 
       def self.validate(ticket)
