@@ -9,6 +9,7 @@ describe Cassify::Models::LoginTicket do
 
   it "should be expirable" do
     login_ticket = Cassify::Models::LoginTicket.generate!("http://localhost:3000")
+    login_ticket.expired?.should be_false
     login_ticket.update_attribute(:created_on, Time.now - 2.days)
     login_ticket.expired?.should be_true
     lambda { Cassify::Models::LoginTicket.validate(login_ticket.to_s) }.should raise_error

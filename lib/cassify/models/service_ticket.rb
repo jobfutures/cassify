@@ -4,7 +4,7 @@ module Cassify
       set_table_name 'casserver_st'
 
       belongs_to :granted_by_tgt,
-        :class_name => 'Cassify::Model::TicketGrantingTicket',
+        :class_name => 'TicketGrantingTicket',
         :foreign_key => :granted_by_tgt_id
       
       has_one :proxy_granting_ticket,
@@ -45,6 +45,7 @@ module Cassify
           EOL
         else
           service_ticket.consume!
+          service_ticket
         end
       end
         

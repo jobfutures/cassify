@@ -6,7 +6,7 @@ module Cassify
       serialize :extra_attributes
 
       has_many :granted_service_tickets,
-        :class_name => 'Cassify::Models::ServiceTicket',
+        :class_name => 'ServiceTicket',
         :foreign_key => :granted_by_tgt_id
         
       def self.generate!(username, host_name, extra_attributes = {})

@@ -2,7 +2,7 @@ module Cassify
   class ServiceValidate
     attr_reader :proxies, :extra_attributes, :success, :username, :pgtiou, :error
 
-    def intialize(service, ticket, pgt_url = nil, renew = nil)
+    def initialize(service, ticket, pgt_url = nil, renew = nil)
       @service = service
       @ticket  = ticket
       @pgt_url = pgt_url
@@ -12,19 +12,24 @@ module Cassify
       @extra_attributes = {}
     end
 
-    def validate!
-      st, @error = ServiceTicket.validate_ticket(@service, @ticket)
-      @success = st && !@error
-
-      if @success
-        @username = st.username
-        if @pgt_url
-          pgt = Cas.generate_proxy_granting_ticket(@pgt_url, st)
-          @pgtiou = pgt.iou if pgt
-        end
-        @extra_attributes = st.granted_by_tgt.extra_attributes || {}
+    def validate
+      begin
+        service_ticket    = Cassify::Models::ServiceTicket.validate(@service, @ticket)
+        @username         = service_ticket.username
+        @extra_attributes = service_ticket.granted_by_tgt.extra_attributes || {}
+        
+        #if @pgt_url
+        #  pgt = Cas.generate_proxy_granting_ticket(@pgt_url, service_ticket)
+        #  @pgtiou = pgt.iou if pgt
+        #end
+        
+        @success = true
+        self
+      rescue Cassify::Error => e
+        @success = false
+        @error = e
+        self
       end
-      self
     end
   end
 end

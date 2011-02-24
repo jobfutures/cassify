@@ -16,7 +16,7 @@ module Cassify
       end
 
       def expired?
-        (Time.now - self.created_on).to_i < (Time.now.to_i - ::Cassify::Settings.maximum_unused_login_ticket_lifetime)
+        self.created_on < Time.at(Time.now.to_i - ::Cassify::Settings.maximum_unused_login_ticket_lifetime)
       end
       
       def self.expiry_bound

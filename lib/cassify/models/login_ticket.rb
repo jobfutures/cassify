@@ -9,7 +9,7 @@ module Cassify
           :client_hostname => host_name
         )
         ticket.save!
-        logger.debug("Generated login ticket '#{ticket.ticket}' for client at '#{ticket.client_hostname}'")
+        CasLog.info "Generated login ticket '#{ticket.ticket}' for client at '#{ticket.client_hostname}'"
         ticket
       end
 

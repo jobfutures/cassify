@@ -2,7 +2,7 @@ module Cassify
   module Models
     class ProxyTicket < ServiceTicket
       belongs_to :granted_by_pgt,
-        :class_name => 'Cassify::Model::ProxyGrantingTicket',
+        :class_name => 'ProxyGrantingTicket',
         :foreign_key => :granted_by_pgt_id
 
       def self.generate!(target_service, host_name, proxy_granting_ticket)
