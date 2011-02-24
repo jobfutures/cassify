@@ -27,10 +27,17 @@ end
 
 module Cassify
   class CasLog
-    @@log = Logger.new("log/cas.log")
-
+    include Singleton
+    
+    attr_reader :logger
+    
+    def initialize
+      logfile = File.exists?("log") ? File.open("log/Cas.log", 'w') : STDERR
+      @logger = Logger.new(logfile)
+    end
+    
     def self.log
-      @@log
+      instance.logger
     end
 
     def self.time
@@ -38,15 +45,15 @@ module Cassify
     end
 
     def self.info(message)
-      log.info "#{time} | #{message_to_log(message)}"
+      self.log.info "#{time} | #{message_to_log(message)}"
     end
     
     def self.error(code, message)
-      log.info "#{time} | ERROR: #{code.to_s} - #{message_to_log(message)}"
+      self.log.info "#{time} | ERROR: #{code.to_s} - #{message_to_log(message)}"
     end
 
     def self.warn(message)
-      log.info "#{time} | WARNING: #{message_to_log(message)}"
+      self.log.info "#{time} | WARNING: #{message_to_log(message)}"
     end
 
     def self.message_to_log(message)
