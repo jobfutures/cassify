@@ -13,7 +13,7 @@ module Cassify
         begin
           cas_database_config = YAML.load_file(database_config)
           ActiveRecord::Base.establish_connection(cas_database_config.fetch(ENV['CAS_ENV']))
-          ActiveRecord::Base.logger = Cassify::Logger.log
+          ActiveRecord::Base.logger = Cassify::CasLog.log
           ActiveRecord::Migration.verbose = true
           ActiveRecord::Migrator.migrate("db/migrate")
         rescue Exception => e
