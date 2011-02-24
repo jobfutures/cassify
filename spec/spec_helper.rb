@@ -12,5 +12,4 @@ require 'cassify'
 
 ActiveRecord::Base.configurations = YAML.load_file(File.join("config", "database.yml"))
 ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations.fetch(ENV['CAS_ENV']))
-
-ActiveRecord::Base.logger = Logger.new(File.open("log/database.log", 'w'))
+ActiveRecord::Base.logger = STDERR
