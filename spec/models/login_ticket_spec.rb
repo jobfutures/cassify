@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Cassify::Models::LoginTicket do
+  it "generate login ticket" do
+    Cassify::Models::LoginTicket.generate!("http://rubyforge.org").ticket.should match /^LT-/
+  end
+  
   it "should be consumable" do
     login_ticket = Cassify::Models::LoginTicket.generate!("http://localhost:3000")
     login_ticket.consume!
