@@ -24,6 +24,7 @@ module Cassify
           raise Cassify::Error.new :TICKET_ERROR, "Expired login ticket '#{ticket}'"
         else
           login_ticket.consume!
+          login_ticket
         end
       end
     end

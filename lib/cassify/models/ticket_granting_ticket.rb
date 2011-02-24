@@ -34,7 +34,7 @@ module Cassify
         when ticket_granting_ticket.expired?
           raise Cassify::Error.new :TICKET_ERROR, "Expired ticket granting ticket '#{ticket}'"
         else
-          ticket
+          ticket_granting_ticket
         end
       end
     end
