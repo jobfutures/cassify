@@ -21,6 +21,10 @@ require 'cassify/service_validate'
 require 'cassify/proxy_validate'
 require 'cassify/proxy'
 
+if defined?(::Rails::Railtie)
+  require 'cassify/railtie'
+end
+
 module Cassify
   class CasLog
     @@log = Logger.new("log/cas.log")
