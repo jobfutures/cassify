@@ -1,23 +1,26 @@
 module Cassify
   class ProxyValidate < ServiceValidate
-    def validate!
-      t, @error = Models::ProxyTicket.validate_ticket(@service, @ticket)
-      @success = t && !@error
-      if @success
-        @username = t.username
+    def validate
+      begin
+        proxy_ticket      = Cassify::Models::ProxyTicket.validate(@service, @ticket)
+        @extra_attributes = proxy_ticket.granted_by_tgt.extra_attributes || {}
         
-        if t.kind_of? ProxyTicket
-          @proxies << t.granted_by_pgt.service_ticket.service
+        if proxy_ticket.kind_of? ProxyTicket
+          @proxies << proxy_ticket.granted_by_pgt.service_ticket.service
         end
 
-        if @pgt_url
-          pgt = generate_proxy_granting_ticket(@pgt_url, t)
-          @pgtiou = pgt.iou if pgt
-        end
+        #if @pgt_url
+        #  pgt = generate_proxy_granting_ticket(@pgt_url, t)
+        #  @pgtiou = pgt.iou if pgt
+        #end
 
-        @extra_attributes = t.granted_by_tgt.extra_attributes || {}
+        @success = true
+        self
+      rescue Cassify::Error => e
+        @success = false
+        @error = e
+        self
       end
-      self
     end
   end
 end
