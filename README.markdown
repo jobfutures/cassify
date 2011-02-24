@@ -16,6 +16,11 @@ Not working
 
 ## Tests
 
+### How-to: Setup environment to test
+* create database for test
+* setup database.yml file in config/datatbase.yml
+* rake cassify:migrate CAS_ENV=test
+
 passing specs for:
 
 * log in ticket
@@ -37,4 +42,6 @@ faling specs for:
 
 ## Spec
 
-[CAS Spec](http://www.jasig.org/cas/protocol)
+[[CAS Spec | http://www.jasig.org/cas/protocol]]
+[[CAS 1.0 Archetecture | http://www.jasig.org/cas/cas1-architecture]]
+[[CAS 1.0 Archetecture | http://www.jasig.org/cas/cas2-architecture]]
