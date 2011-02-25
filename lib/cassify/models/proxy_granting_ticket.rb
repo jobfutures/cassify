@@ -29,7 +29,7 @@ module Cassify
             end
           end
         rescue Errno::ECONNREFUSED
-          errors.add(:pgt_url, "#{url} do not responded")
+          errors.add(:pgt_url, "#{url} is not reachable")
         end
       end
       
@@ -45,8 +45,10 @@ module Cassify
           :client_hostname    => host_name
         )
         pgt.url = pgt_url
-        if pgt.save!
+        if pgt.save
           pgt
+        else
+          nil
         end
       end
       
