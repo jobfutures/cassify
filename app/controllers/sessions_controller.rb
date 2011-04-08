@@ -1,5 +1,4 @@
 class SessionsController < Devise::SessionsController
-  prepend_before_filter :require_no_authentication, :only => [ :validate, :cas ]
   before_filter :cas_login_params, :only => [ :new ]
 
   def create
@@ -36,11 +35,6 @@ class SessionsController < Devise::SessionsController
     }
     redirect_to Cassify::Utils.service_uri_with_ticket(service, service_ticket.to_s)
   end
-
-  def cas_login_params
-    @service = service
-    @ticket  = Cassify::LoginTicket.generate!(service)
-  end
   
   private 
     def host_name
@@ -50,5 +44,10 @@ class SessionsController < Devise::SessionsController
     def service
       url = Cassify::Utils.clean_service_url(params[:service] || host_name)
       url.blank? ? '/' : url
+    end
+    
+    def cas_login_params
+      @service = service
+      @ticket  = Cassify::LoginTicket.generate!(service)
     end
 end
