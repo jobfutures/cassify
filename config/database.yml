@@ -1,8 +1,0 @@
-test: &test
-  database: cassify
-  host: localhost
-  adapter: postgresql
-
-cas:
-  test:
-    <<: *test

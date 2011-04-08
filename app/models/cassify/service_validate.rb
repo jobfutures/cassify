@@ -14,14 +14,9 @@ module Cassify
 
     def validate
       begin
-        service_ticket    = Cassify::Models::ServiceTicket.validate(@service, @ticket)
+        service_ticket    = Cassify::ServiceTicket.validate(@service, @ticket)
         @username         = service_ticket.username
         @extra_attributes = service_ticket.granted_by_tgt.extra_attributes || {}
-        
-        #if @pgt_url
-        #  pgt = Cas.generate_proxy_granting_ticket(@pgt_url, service_ticket)
-        #  @pgtiou = pgt.iou if pgt
-        #end
         
         @success = true
         self

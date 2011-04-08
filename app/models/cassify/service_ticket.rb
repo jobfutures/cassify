@@ -5,9 +5,6 @@ module Cassify
     belongs_to :granted_by_tgt,
       :class_name => 'TicketGrantingTicket',
       :foreign_key => :granted_by_tgt_id
-    
-    has_one :proxy_granting_ticket,
-      :foreign_key => :created_by_st_id
       
     after_save :log_ticket
     
@@ -44,8 +41,6 @@ module Cassify
           raise Cassify::Error.new :TICKET_ERROR, "Service ticket was nil"
         when service_ticket.consumed?
           raise Cassify::Error.new :TICKET_ERROR, "Expired service ticket '#{ticket}'"
-        when service_ticket.kind_of?(Cassify::Models::ProxyTicket) && !allow_proxy_tickets
-          raise Cassify::Error.new :TICKET_ERROR, "Ticket '#{ticket}' is a proxy ticket, but only service tickets are allowed here."
         when !service_ticket.matches_service?(service)
           raise Cassify::Error.new :TICKET_ERROR, <<-EOL
             The ticket '#{ticket}' belonging to user '#{service_ticket.username}' is valid,

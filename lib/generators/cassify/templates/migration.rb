@@ -1,4 +1,4 @@
-class CreateInitialStructure < ActiveRecord::Migration
+class CreateCassifyTables < ActiveRecord::Migration
   def self.up
     create_table 'casserver_lt', :force => true do |t|
       t.string    'ticket',          :null => false
