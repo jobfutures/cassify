@@ -14,24 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "cassify"
 
-  s.add_development_dependency "bundler", ">= 1.0.0"
-  s.add_development_dependency "rspec", ">= 2.0.0"
-  s.add_development_dependency "activerecord", ">= 3.0.0"
-  s.add_development_dependency "activesupport", ">= 3.0.0"
-  s.add_development_dependency "pg"
-  s.add_development_dependency "devise"
-  s.add_development_dependency "builder"
-  s.add_development_dependency "crypt-isaac"
-
-  s.add_runtime_dependency "activerecord", ">= 3.0.0"
-  s.add_runtime_dependency "activesupport", ">= 3.0.0"
-  s.add_runtime_dependency "pg"
-  s.add_runtime_dependency "devise"
-  s.add_runtime_dependency "builder"
-  s.add_runtime_dependency "crypt-isaac"
-
-  s.files         = `git ls-files`.split("\n")
+  s.files = Dir["{app,lib,config}/**/*"] + ["MIT-LICENSE", "Rakefile", "Gemfile", "README.rdoc"]
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
 end

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Cassify::ServiceValidate do
   before do
-    @ticket_granting_ticket = Cassify::Models::TicketGrantingTicket.generate!("user@user.com", "localhost", :roles => ['user', 'superuser'])
-    @service_ticket = Cassify::Models::ServiceTicket.generate!("http://localhost:3000", "user@user.com", "localhost", @ticket_granting_ticket)
+    @ticket_granting_ticket = Cassify::TicketGrantingTicket.generate!("user@user.com", "localhost", :roles => ['user', 'superuser'])
+    @service_ticket = Cassify::ServiceTicket.generate!("http://localhost:3000", "user@user.com", "localhost", @ticket_granting_ticket)
   end
 
   it "should return valid object when passed a correct service ticket" do

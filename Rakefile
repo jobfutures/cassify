@@ -1,24 +1,25 @@
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-
-require 'cassify/tasks'
-require 'bundler'
-Bundler::GemHelper.install_tasks
-
-require 'rspec/core/rake_task'
-desc 'Run Cassify unit tests.'
-RSpec::Core::RakeTask.new('spec') do |t|
-  t.rspec_opts = ['--colour', '--format nested']
-  t.pattern = 'spec/**/*_spec.rb'
+# encoding: UTF-8
+require 'rubygems'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
-namespace :cassify do
-  desc 'run CAS migrations'
-  task 'migrate' do
-    Cassify::Tasks.migrate
-  end
+require 'rake'
+require 'rake/rdoctask'
 
-  desc 'install cas views'
-  task 'sinatra' do
-    Cassify::Tasks.install_views("views")
-  end
+require 'rspec/core'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
+
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = 'Cassify'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README.rdoc')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end

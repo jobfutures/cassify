@@ -1,5 +1,6 @@
 ## MAC OS
 .DS_Store
+.bundle/
 
 ## TEXTMATE
 *.tmproj
@@ -20,6 +21,11 @@ pkg/*
 
 ## PROJECT::SPECIFIC
 config/database.example.yml
-log/
+log/*.log
 views/*.erb
+
+## PROJECT::Test
+spec/dummy/db/*.sqlite3
+spec/dummy/log/*.log
+spec/dummy/tmp/
 test
