@@ -20,7 +20,7 @@ module Cassify
         
         @success = true
         self
-      rescue Cassify::Errors.Base => e
+      rescue Cassify::Errors::Base => e
         @success = false
         @error = e
         self

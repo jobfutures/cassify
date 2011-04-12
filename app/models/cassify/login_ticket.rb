@@ -23,11 +23,11 @@ module Cassify
       login_ticket = find_by_ticket(ticket)
       case
       when login_ticket.nil?
-        raise Cassify::Errors.Base.new :TICKET_ERROR, "Login Ticket was nil"
+        raise Cassify::Errors::Base.new :TICKET_ERROR, "Login Ticket was nil"
       when login_ticket.consumed?
-        raise Cassify::Errors.Base.new :TICKET_ERROR, "Login ticket '#{ticket}' previously used up"
+        raise Cassify::Errors::Base.new :TICKET_ERROR, "Login ticket '#{ticket}' previously used up"
       when login_ticket.expired?
-        raise Cassify::Errors.Base.new :TICKET_ERROR, "Expired login ticket '#{ticket}'"
+        raise Cassify::Errors::Base.new :TICKET_ERROR, "Expired login ticket '#{ticket}'"
       else
         login_ticket.consume!
         login_ticket

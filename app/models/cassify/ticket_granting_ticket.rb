@@ -29,9 +29,9 @@ module Cassify
       ticket_granting_ticket = find_by_ticket(ticket)
       case
       when ticket_granting_ticket.nil?
-        raise Cassify::Errors.TicketGrantingTicketNotValid.new
+        raise Cassify::Errors::TicketGrantingTicketNotValid.new
       when ticket_granting_ticket.expired?
-        raise Cassify::Errors.TicketGrantingTicketNotValid.new
+        raise Cassify::Errors::TicketGrantingTicketNotValid.new
       else
         ticket_granting_ticket
       end
