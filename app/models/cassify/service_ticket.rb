@@ -38,11 +38,11 @@ module Cassify
         service_ticket = find_by_ticket(ticket)
         case
         when service_ticket.nil?
-          raise Cassify::Error.new :TICKET_ERROR, "Service ticket was nil"
+          raise Cassify::Errors.Base.new :TICKET_ERROR, "Service ticket was nil"
         when service_ticket.consumed?
-          raise Cassify::Error.new :TICKET_ERROR, "Expired service ticket '#{ticket}'"
+          raise Cassify::Errors.Base.new :TICKET_ERROR, "Expired service ticket '#{ticket}'"
         when !service_ticket.matches_service?(service)
-          raise Cassify::Error.new :TICKET_ERROR, <<-EOL
+          raise Cassify::Errors.Base.new :TICKET_ERROR, <<-EOL
             The ticket '#{ticket}' belonging to user '#{service_ticket.username}' is valid,
             but the requested service '#{service}' does not match the service '#{service_ticket.service}'
             associated with this ticket.
