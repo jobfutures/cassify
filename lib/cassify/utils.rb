@@ -2,7 +2,7 @@ module Cassify
   class Utils
     class << self
       def random_string(max_length = 29)
-        ActiveSupport::SecureRandom.base64(max_length)
+        ActiveSupport::SecureRandom.hex(max_length)
       end
 
       def service_uri_with_ticket(service, ticket)
