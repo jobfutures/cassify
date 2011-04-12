@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    cassify (0.0.2)
+      activesupport
+      builder
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -43,7 +50,6 @@ GEM
     celerity (0.8.9)
     childprocess (0.1.8)
       ffi (~> 1.0.6)
-    crypt-isaac (0.9.1)
     culerity (0.2.15)
     devise (1.2.1)
       bcrypt-ruby (~> 2.1.2)
@@ -122,10 +128,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  builder
   bundler (~> 1.0.0)
   capybara (>= 0.4.0)
-  crypt-isaac
+  cassify!
   devise
   jeweler (~> 1.5.2)
   rails (>= 3.0.0)
