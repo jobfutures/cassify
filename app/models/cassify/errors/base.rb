@@ -1,5 +1,5 @@
 module Cassify::Errors
-  class Base < RuntimeError
+  class Base < Exception
     attr_reader :code, :message
 
     def initialize(code, message)
