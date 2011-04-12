@@ -1,12 +1,11 @@
 source "http://rubygems.org"
 
-gem "bundler", "~> 1.0.0"
-gem "jeweler", "~> 1.5.2"
-gem "rails", ">= 3.0.0"
-gem "devise"
-gem "builder"
-gem "crypt-isaac"
+gemspec
 
+gem "bundler", "~> 1.0.0"
+gem "rails", ">= 3.0.0"
+gem "jeweler", "~> 1.5.2"
+  
 group :test, :development do
   gem "rspec", ">= 2.0.0"
   gem "rspec-rails", ">= 2.0.0.beta"

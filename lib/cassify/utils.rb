@@ -2,11 +2,7 @@ module Cassify
   class Utils
     class << self
       def random_string(max_length = 29)
-        rg  =  Crypt::ISAAC.new
-        max = 4294619050
-        ar  = [rg.rand(max), rg.rand(max), rg.rand(max), rg.rand(max), rg.rand(max), rg.rand(max), rg.rand(max), rg.rand(max)]
-        r   = "#{Time.now.to_i}r%X%X%X%X%X%X%X%X" % ar
-        r[0..max_length-1]
+        ActiveSupport::SecureRandom.base64(max_length)
       end
 
       def service_uri_with_ticket(service, ticket)
