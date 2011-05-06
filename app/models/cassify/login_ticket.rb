@@ -5,7 +5,7 @@ module Cassify
     after_save :log_ticket
     
     def log_ticket
-      CasLog.info "Generated login ticket '#{ticket}' for client at '#{client_hostname}'"
+      Cassify.logger.info "Generated login ticket '#{ticket}' for client at '#{client_hostname}'"
     end
     
     def self.generate!(host_name)

@@ -29,4 +29,9 @@ describe Cassify::LoginTicket do
     login_ticket.should be_expired
     Cassify::LoginTicket.cleanup.should == 1
   end
+  
+  # should move to a new file
+  it "should write to the log file" do
+
+  end
 end

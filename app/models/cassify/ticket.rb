@@ -6,7 +6,7 @@ module Cassify
     
     def self.cleanup
       puts Time.now - Cassify::Settings.max_lifetime
-      Cassify::CasLog.info "Destroying #{self.expired.count} expired #{self.name.demodulize}"
+      Cassify.logger.info "Destroying #{self.expired.count} expired #{self.name.demodulize}"
       delete_all ["created_on < ?", expiry_bound]
     end
     

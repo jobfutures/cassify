@@ -4,7 +4,7 @@ module Cassify
   class Settings
     include Singleton
     
-    attr_accessor :maximum_unused_login_ticket_lifetime, :max_lifetime
+    attr_accessor :maximum_unused_login_ticket_lifetime, :max_lifetime, :logger
 
     def self.configure
       yield instance if block_given?

@@ -9,7 +9,7 @@ module Cassify
     after_save :log_ticket
     
     def log_ticket
-      CasLog.info <<-EOL
+      Cassify.logger.info <<-EOL
         Generated service ticket '#{ticket}' for service '#{service}' 
         for user '#{username}' at '#{client_hostname}'
       EOL

@@ -20,7 +20,7 @@ module Cassify
         log = []
         log << "Generated ticket granting ticket '#{ticket.ticket}' for user '#{ticket.username}' at '#{ticket.client_hostname}'"
         log << "with extra attributes #{extra_attributes.inspect}" unless extra_attributes.blank?
-        CasLog.info log.join(' ')
+        Cassify.logger.info log.join(' ')
         ticket
       end
     end
