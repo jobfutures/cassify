@@ -5,7 +5,7 @@ module Cassify::Errors
     def initialize(code, message)
       @code    = code
       @message = message
-      Cassify.logger.error code, message
+      Cassify.logger.error "#{code} - #{message}"
     end
 
     def to_s
