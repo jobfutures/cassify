@@ -1,11 +1,12 @@
 require 'active_support/core_ext'
+require 'active_support/buffered_logger'
 require 'cassify/settings'
 require 'cassify/utils'
 require 'cassify/engine'
 
 module Cassify
   def self.logger
-    @logger ||= Logger.new("log/Cas.log")
+    @logger ||= ActiveSupport::BufferedLogger.new("log/cas.log")
   end
   
   def self.logger=(logger)
