@@ -4,18 +4,17 @@ module Cassify
       ticket
     end
     
-    def self.cleanup
-      puts Time.now - Cassify::Settings.max_lifetime
-      Cassify.logger.info "Destroying #{self.expired.count} expired #{self.name.demodulize}"
-      delete_all ["created_on < ?", expiry_bound]
-    end
-    
     def consume!
       self.update_attribute(:consumed, Time.now)
     end
 
     def expired?
       self.created_on < Time.at(Time.now.to_i - ::Cassify::Settings.maximum_unused_login_ticket_lifetime)
+    end
+    
+    def self.cleanup
+      Cassify.logger.info "Destroying #{self.expired.count} expired #{self.name.demodulize}"
+      delete_all ["created_on < ?", expiry_bound]
     end
     
     def self.expiry_bound
