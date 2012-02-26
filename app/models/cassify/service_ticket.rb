@@ -2,16 +2,18 @@ module Cassify
   class ServiceTicket < Ticket
     set_table_name 'casserver_st'
 
-    belongs_to :granted_by_tgt,
-      :class_name => 'TicketGrantingTicket',
-      :foreign_key => :granted_by_tgt_id
+    belongs_to :granted_by_tgt, :class_name => 'TicketGrantingTicket', :foreign_key => :granted_by_tgt_id
       
-    after_save :log_ticket
+    before_save :generate_token
+    after_save  :log_ticket
+    
+    def generate_token
+      self.ticket = "ST-#{Cassify::Utils.random_string}"
+    end
     
     def log_ticket
       Cassify.logger.info <<-EOL
-        Generated service ticket '#{ticket}' for service '#{service}' 
-        for user '#{username}' at '#{client_hostname}'
+        Generated service ticket '#{ticket}' for service '#{service}' and for user '#{username}'
       EOL
     end
 
@@ -19,22 +21,12 @@ module Cassify
       Cassify::Utils.clean_service_url(self.service) == Cassify::Utils.clean_service_url(service)
     end
     
-    class << self
-      def generate!(service, username, host_name, ticket_granting_ticket)
-        ticket = new(
-          :ticket             => "ST-#{Cassify::Utils.random_string}",
-          :service            => service,
-          :username           => username,
-          :granted_by_tgt_id  => ticket_granting_ticket.id,
-          :client_hostname    => host_name
-        )
-
-        if ticket.save!
-          ticket
-        end
-      end
+    def extra_attributes
+      service_ticket.granted_by_tgt.extra_attributes || {} 
+    end
     
-      def validate(service, ticket, allow_proxy_tickets = false)
+    class << self
+      def validate(service, ticket)
         service_ticket = find_by_ticket(ticket)
         case
         when service_ticket.nil?

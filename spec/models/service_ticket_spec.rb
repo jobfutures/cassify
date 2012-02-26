@@ -1,23 +1,28 @@
 require 'spec_helper'
 
 describe Cassify::ServiceTicket do
+  let(:ticket_granting_ticket) { ticket_granting_ticket = Cassify::TicketGrantingTicket.generate!("user@user.com", "localhost") }
+  let(:service_ticket) do
+    Cassify::ServiceTicket.create! do |c|
+      c.granted_by_tgt  = ticket_granting_ticket
+      c.service         = "http://localhost:3000"
+      c.client_hostname = "localhost"
+      c.username        = ticket_granting_ticket.username
+    end
+  end
+  
   it "should be consumable" do
-    ticket_granting_ticket = Cassify::TicketGrantingTicket.generate!("user@user.com", "localhost")
-    service_ticket = Cassify::ServiceTicket.generate!("http://localhost:3000", "user@user.com", "localhost", ticket_granting_ticket)
-    Cassify::ServiceTicket.validate("http://localhost:3000", service_ticket.to_s).should be_true
+    service_ticket.should_not be_consumed
     service_ticket.consume!
-    lambda { Cassify::ServiceTicket.validate("http://localhost:3000", service_ticket.to_s) }.should raise_error
+    service_ticket.should be_consumed
   end
 
   it "should be expirable" do
-    login_ticket = Cassify::LoginTicket.generate!("http://localhost:3000")
-    login_ticket.update_attribute(:created_on, Time.now - 2.days)
-    login_ticket.expired?.should be_true
-    lambda { Cassify::LoginTicket.validate(login_ticket.to_s) }.should raise_error
+    service_ticket.update_attribute(:created_on, Time.now - 2.days)
+    service_ticket.should be_expired
   end
 
   it "should have to_s method" do
-    ticket_granting_ticket = Cassify::TicketGrantingTicket.generate!("user@user.com", "localhost")
-    Cassify::ServiceTicket.generate!("http://localhost:3000", "user@user.com", "localhost", ticket_granting_ticket).to_s.should match /^ST-/
+    service_ticket.to_s.should == service_ticket.ticket
   end
 end
