@@ -29,6 +29,10 @@ passing specs for:
 * single signout
 * client methods for authentication
 
+## Working
+
+* see how can we use after_signout_path_for in casssify
+
 ## Spec
 
 * [[CAS Spec|http://www.jasig.org/cas/protocol]]

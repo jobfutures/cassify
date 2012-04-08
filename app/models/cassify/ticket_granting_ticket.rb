@@ -7,7 +7,7 @@ module Cassify
     has_many :granted_service_tickets,
       :class_name => 'ServiceTicket',
       :foreign_key => :granted_by_tgt_id
-      
+
     def self.generate!(username, host_name, extra_attributes = {})
       ticket = new(
         :ticket           => "TGC-#{Cassify::Utils.random_string}",
@@ -23,6 +23,13 @@ module Cassify
         Cassify.logger.info log.join(' ')
         ticket
       end
+    end
+    
+    def self.authenticate(ticket)
+      ticket_granting_ticket = Cassify::TicketGrantingTicket.validate(ticket)
+      # make sure user need to login again if their was changed
+      # Maybe it is better to save user.id rather than user's email
+      User.find(ticket_granting_ticket.username)
     end
     
     def self.validate(ticket)

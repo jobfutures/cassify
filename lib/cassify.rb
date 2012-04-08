@@ -3,6 +3,9 @@ require 'active_support/buffered_logger'
 require 'cassify/settings'
 require 'cassify/utils'
 require 'cassify/engine'
+require 'cassify/hooks/service_register'
+require 'cassify/strategies/cas_authenticable'
+
 
 module Cassify
   def self.logger

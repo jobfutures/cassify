@@ -25,6 +25,20 @@ module Cassify
       service_ticket.granted_by_tgt.extra_attributes || {} 
     end
     
+    def service_url
+      service_uri = URI.parse(self.service)
+      sep = if self.service.include? "?"
+              if service_uri.query.empty?
+                ""
+              else
+                "&"
+              end
+            else
+              "?"
+            end
+      [self.service, "ticket=#{self.ticket}"].join(sep)
+    end
+    
     class << self
       def validate(service, ticket)
         service_ticket = find_by_ticket(ticket)

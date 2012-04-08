@@ -4,21 +4,6 @@ module Cassify
       def random_string(max_length = 29)
         ActiveSupport::SecureRandom.hex(max_length)
       end
-
-      def service_uri_with_ticket(service, ticket)
-        service_uri = URI.parse(service)
-        sep = if service.include? "?"
-                if service_uri.query.empty?
-                  ""
-                else
-                  "&"
-                end
-              else
-                "?"
-              end
-        service_with_ticket = "#{service}#{sep}ticket=#{ticket}"
-        service_with_ticket
-      end
       
       def serialize_extra_attribute(builder, value)
         if value.kind_of?(String)
