@@ -4,9 +4,7 @@ PATH
     cassify (0.0.3)
       activesupport
       builder
-      bundler (~> 1.0.0)
       devise
-      jeweler (~> 1.5.2)
       rails (>= 3.0.0)
 
 GEM
@@ -64,12 +62,7 @@ GEM
       abstract (>= 1.0.0)
     ffi (1.0.7)
       rake (>= 0.8.7)
-    git (1.2.5)
     i18n (0.5.0)
-    jeweler (1.5.2)
-      bundler (~> 1.0.0)
-      git (>= 1.2.5)
-      rake
     json_pure (1.5.1)
     mail (2.2.19)
       activesupport (>= 2.3.6)

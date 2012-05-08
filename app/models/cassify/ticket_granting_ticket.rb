@@ -7,27 +7,10 @@ module Cassify
     has_many :granted_service_tickets,
       :class_name => 'ServiceTicket',
       :foreign_key => :granted_by_tgt_id
-
-    def self.generate!(username, host_name, extra_attributes = {})
-      ticket = new(
-        :ticket           => "TGC-#{Cassify::Utils.random_string}",
-        :username         => username,
-        :extra_attributes => extra_attributes,
-        :client_hostname  => host_name
-      )
-
-      if ticket.save!
-        log = []
-        log << "Generated ticket granting ticket '#{ticket.ticket}' for user '#{ticket.username}' at '#{ticket.client_hostname}'"
-        log << "with extra attributes #{extra_attributes.inspect}" unless extra_attributes.blank?
-        Cassify.logger.info log.join(' ')
-        ticket
-      end
-    end
     
     def self.authenticate(ticket)
       ticket_granting_ticket = Cassify::TicketGrantingTicket.validate(ticket)
-      # make sure user need to login again if their was changed
+      # make sure user need to login again if there was changed
       # Maybe it is better to save user.id rather than user's email
       User.find(ticket_granting_ticket.username)
     end
@@ -36,9 +19,9 @@ module Cassify
       ticket_granting_ticket = find_by_ticket(ticket)
       case
       when ticket_granting_ticket.nil?
-        raise Cassify::Errors::TicketGrantingTicketNotValid.new
+        raise Cassify::Errors::LoginTokenNotFound.new(ticket)
       when ticket_granting_ticket.expired?
-        raise Cassify::Errors::TicketGrantingTicketNotValid.new
+        raise Cassify::Errors::LoginTokenExpired.new(ticket)
       else
         ticket_granting_ticket
       end

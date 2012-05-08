@@ -15,14 +15,25 @@ module Cassify
     end
 
     def generate_ticket_granting_ticket(user, service_url)
-      ticket_granting_ticket = Cassify::TicketGrantingTicket.generate!(user.id, service_url)
+      ticket = Cassify::TicketGrantingTicket.new(
+        :ticket           => "TGC-#{Cassify::Utils.random_string}",
+        :username         => user.id,
+        :client_hostname  => service_url
+      )
+
+      if ticket.save!
+        log = []
+        log << "Generated ticket granting ticket '#{ticket.ticket}' for user '#{ticket.username}' at '#{ticket.client_hostname}'"
+        Cassify.logger.info log.join(' ')
+        ticket
+      end
     end
   end
 end
 
 Warden::Manager.after_set_user do |user, auth, opts|
-  debugger
   if service_path   = auth.raw_session["#{opts[:scope]}_return_to"] && auth.cookies['tgt'].nil?
+    debugger
     service_ticket  = Cassify::ServiceRegister.new.register_service(user, service_path)
     auth.cookies.permanent['tgt'] = {
       :value   => service_ticket.granted_by_tgt.to_s,

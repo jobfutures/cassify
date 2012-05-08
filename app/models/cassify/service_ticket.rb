@@ -1,3 +1,5 @@
+require "addressable/uri"
+
 module Cassify
   class ServiceTicket < Ticket
     set_table_name 'casserver_st'
@@ -26,17 +28,9 @@ module Cassify
     end
     
     def service_url
-      service_uri = URI.parse(self.service)
-      sep = if self.service.include? "?"
-              if service_uri.query.empty?
-                ""
-              else
-                "&"
-              end
-            else
-              "?"
-            end
-      [self.service, "ticket=#{self.ticket}"].join(sep)
+      service_uri = Addressable::URI.parse(self.service)
+      service_uri.query_values = (service_uri.query_values || {}).merge({ :ticket => self.ticket })
+      service_uri.to_s
     end
     
     class << self

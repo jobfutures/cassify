@@ -1,9 +1,11 @@
 class CasController < ApplicationController
+  skip_before_filter :authenticate
   prepend_before_filter :authenticate_user!, :only => [:grant]
   
   # Can be Cassify Session new
   def grant
-    ticket_granting_ticket = Cassify::TicketGrantingTicket.find_by_ticket(cookies['tgt'])
+    debugger
+    ticket_granting_ticket = Cassify::TicketGrantingTicket.validate(cookies['tgt'])
     service_ticket = generate_service_ticket(service_path, ticket_granting_ticket)
     redirect_to service_ticket.service_url
   end
@@ -14,7 +16,7 @@ class CasController < ApplicationController
       service_ticket = Cassify::ServiceTicket.validate(params[:service], params[:ticket])
       render :template => 'validate_successful.builder', :content_type => :xml, :locals => { :service_ticket => service_ticket }
     rescue Exception => e
-      render :template => 'validate_fail.builder', :content_type => :xml, :locals => { :error => e}
+      render :template => 'validate_fail.builder', :content_type => :xml, :locals => { :error => e }
     end
   end
 

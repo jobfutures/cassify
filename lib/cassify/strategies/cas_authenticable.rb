@@ -10,7 +10,7 @@ module Cassify
          u = Cassify::TicketGrantingTicket.authenticate(cookies['tgt'])
          success!(u)
         rescue Exception => e
-          fail("Could not login")
+          fail("Could not login because of following reason:\n #{e.message}")
         end
       end
     end 

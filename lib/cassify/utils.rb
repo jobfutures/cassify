@@ -14,7 +14,7 @@ module Cassify
           builder.cdata! value.to_yaml
         end
       end
-
+      
       def clean_service_url(dirty_service)
         return dirty_service if dirty_service.blank?
         clean_service = dirty_service.dup
