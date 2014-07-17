@@ -31,6 +31,6 @@ passing specs for:
 
 ## Spec
 
-* [[CAS Spec|http://www.jasig.org/cas/protocol]]
-* [[CAS 1.0 Archetecture | http://www.jasig.org/cas/cas1-architecture]]
-* [[CAS 1.0 Archetecture | http://www.jasig.org/cas/cas2-architecture]]
+* [CAS Spec](http://www.jasig.org/cas/protocol)
+* [CAS 1.0 Archetecture](http://www.jasig.org/cas/cas1-architecture)
+* [CAS 1.0 Archetecture](http://www.jasig.org/cas/cas2-architecture)
